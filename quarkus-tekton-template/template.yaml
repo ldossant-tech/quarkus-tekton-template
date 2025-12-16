@@ -1,0 +1,40 @@
+apiVersion: scaffolder.backstage.io/v1beta3
+kind: Template
+metadata:
+  name: quarkus-tekton-demo
+  title: Quarkus + Tekton Demo
+  description: Template simples para demo no Developer Hub
+spec:
+  owner: platform-team
+  type: service
+
+  parameters:
+    - title: Informações da aplicação
+      required:
+        - component_id
+      properties:
+        component_id:
+          title: Nome da aplicação
+          type: string
+          description: Nome do componente
+
+  steps:
+    - id: fetch-base
+      name: Fetch Skeleton
+      action: fetch:template
+      input:
+        url: ./skeleton
+        values:
+          name: ${{ parameters.component_id }}
+
+    - id: publish
+      name: Publish Repository
+      action: publish:github
+      input:
+        repoUrl: github.com?repo=${{ parameters.component_id }}&owner=SEU_USUARIO
+        defaultBranch: main
+
+  output:
+    links:
+      - title: Repositório criado
+        url: ${{ steps.publish.output.remoteUrl }}
